@@ -1,0 +1,5 @@
+ROOT = "/api"
+REPORT_ENDPOINT = ROOT + '/report'
+API_ENDPOINT = 'WEATHER API ENDPOINT'
+METHOD_GET = 'GET'
+MIME_JSON = 'application/json'
