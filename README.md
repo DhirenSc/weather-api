@@ -1,12 +1,16 @@
 # Weather Report API [Case Study]
 
-- This repository contains work done for developing Weather Cast REST API
-- This API returns specific weather data based on a users current location
+- This repository contains work done for developing Weather Cast REST API.
+- This API returns specific weather data based on a users current location.
+- Response contains 3 key fields - City, State and Day.
+- Day is divided into 4 parts - 0, 1, 2 and 3.
+- 0 represents the current day. 1, 2 and 3 represent consecutive days.
+- For each day, weather description, high-temperature, low-temperature and humidity is displayed.
 
 ## Instructions to run locally:
 
-1. Clone the repository to a folder in your system
-2. Make sure you have python 3 and ```pip``` installed in your machine
+1. Clone the repository to a folder in your system.
+2. Make sure you have python 3 and ```pip``` installed in your machine.
 3. Enter the cloned repository and run these commands:
 
 ```python
