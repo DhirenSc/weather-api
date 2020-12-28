@@ -79,8 +79,10 @@ class DBOperations:
             exception_flag: boolean value denoting if exception has occured
     """
     def check_location(self, city, state):
+        check_location_flag, location_id, exception_flag = None, None, None
         try:
             conn = self.connect()
+            check_location_flag, location_id, exception_flag = None, None, None
             with conn.cursor(prepared=True) as cursor:
                 location_row = (city, state)
                 cursor.execute(CHECK_LOCATION_QUERY, location_row)
@@ -89,16 +91,21 @@ class DBOperations:
                     now = datetime.now()
                     if (now - row[1]).total_seconds() > NUMBER_OF_SECONDS:
                         # exceeded 24 hours
-                        self.disconnect()
-                        return False, row[0], False
+                        check_location_flag = False
+                        location_id = row[0]
+                        exception_flag = False
                     else:
                         # not exceeded 24 hours
-                        self.disconnect()
-                        return True, row[0], False
+                        check_location_flag = True
+                        location_id = row[0]
+                        exception_flag = False
                 else:
                     # no location present
-                    self.disconnect()
-                    return False, None, False
+                    check_location_flag = False
+                    location_id = None
+                    exception_flag = False
+            self.disconnect()
+            return check_location_flag, location_id, exception_flag
         except:
             self.disconnect()
             return False, None, True
@@ -114,8 +121,7 @@ class DBOperations:
         try:
             conn = self.connect()
             with conn.cursor(prepared=True) as cursor:
-                data_row = (str(location_id))
-                cursor.execute(GET_DAILY_DATA, data_row)
+                cursor.execute(GET_DAILY_DATA, [(location_id)])
                 daily_data = []
                 for row in CursorByName(cursor):
                     daily_data.append(row)

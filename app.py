@@ -47,6 +47,7 @@ def report():
             response (json): Containing the location details and 3 day weather report.
     """
     request_ip = request.remote_addr
+    
     # Call Ipstack to get ip address geolocation
     geolocation = IPLocation(request_ip)
     city, state = geolocation.get_location()
