@@ -13,7 +13,7 @@
 1. pip3 install -r requirements.txt
 2. python3 app.py
 ```
-4. The app will start on http://0.0.0.0:80/
+4. The app will start on this URL : http://0.0.0.0:80/
 5. Go to your browser and run http://localhost/api/report to get the weather report for your location.
 
 ## Live version:
@@ -29,15 +29,18 @@ This is just for testing purposes.
 ## MySQL Database:
 
 - MySQL datbase is hosted via freemysqlhosting.net. I have added a file named ```create_database.sql``` in the ```sql``` folder which contains the DDL scripts.
-- Database connection details are placed in ```database/utility.py``` if you want to run the database locally or want to host database someplace else
+- Database connection details are placed in ```database/utility.py``` in case you want to run the database locally or want to host database someplace else.
 
 ## IPQualityScore API:
 
 - The geolocation API I have used is IPQualityScore (https://www.ipqualityscore.com/documentation/proxy-detection/overview). This API returns the geo-location details for a particular IP Address.
-- API KEY can be found in ```iplocation/utility.py```
+- API key can be found in ```iplocation/utility.py```
 
 ## Built with:
 ```
 - Flask
 - MySQL
 ```
+
+## AWS Deployment
+
