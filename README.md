@@ -44,3 +44,4 @@ This is just for testing purposes.
 
 ## AWS Deployment
 
+![alt text](https://github.com/DhirenSc/weather-api/blob/main/static/AWS%20Architecture.png?raw=True)
