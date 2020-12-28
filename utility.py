@@ -1,8 +1,9 @@
 ROOT = "/api"
-REPORT_ENDPOINT = ROOT + '/report'
-API_ENDPOINT = "YOUR WEATHER API ENDPOINT"
+REPORT_ENDPOINT = '/api/report'
+API_ENDPOINT = "https://j9l4zglte4.execute-api.us-east-1.amazonaws.com/api/ctl/weather"
 METHOD_GET = 'GET'
 MIME_JSON = 'application/json'
+API_KEY = '1a6cb670-ab36-498f-b3a5-0a5f26692674'
 
 IP_STACK_RESPONSE = {
   "ip":"73.28.110.92",

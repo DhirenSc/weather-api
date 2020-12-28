@@ -21,97 +21,120 @@ class DBOperations:
         """ 
         For disconnecting from the database.
         """
-
         self.db_conn.disconnect()
 
     def insert_or_update_db(self, response_data, location_id):
         """ 
-        For inserting data to the requests table
+        For inserting data to the requests table or updating it based on expiry
           
         Returns: 
-            row count: Number of rows inserted.
+            Success: If insert or update was successful.
         """
-        # try:
-        conn = self.connect()
-        conn.autocommit = False
-        rowcount = 0
-        with conn.cursor(prepared=True) as cursor:
-            location_row = (location_id, response_data['city'], response_data['state'], response_data['country'])
-            if(location_id is None):
-                print("new id")
-                location_id = uuid.uuid4().hex[:6].upper()
-                location_row = (location_id, response_data['city'], response_data['state'], response_data['country'])
-                cursor.execute(INSERT_LOCATION_QUERY, location_row)
-                counter = 0
-                while(counter <= 3):
-                    description = response_data['day'+str(counter)]['description']
-                    high_temp = response_data['day'+str(counter)]['high_temp']
-                    low_temp = response_data['day'+str(counter)]['low_temp']
-                    humidity = response_data['day'+str(counter)]['humidity']
-                    daily_row = (location_id, counter, description, high_temp, low_temp, humidity)
-                    cursor.execute(INSERT_DAILY_QUERY, daily_row)
-                    counter = counter + 1
-            else:
-                print("update_id")
-                timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                location_row = (timestamp, location_id)
-                cursor.execute(UPDATE_LOCATION_QUERY, location_row)
-                counter = 0
-                while(counter <= 3):
-                    description = response_data['day'+str(counter)]['description']
-                    high_temp = response_data['day'+str(counter)]['high_temp']
-                    low_temp = response_data['day'+str(counter)]['low_temp']
-                    humidity = response_data['day'+str(counter)]['humidity']
-                    daily_row = (description, high_temp, low_temp, humidity, location_id, counter)
-                    cursor.execute(UPDATE_DAILY_QUERY, daily_row)
-                    counter = counter + 1
-            conn.commit()
-            return True
-        # except Exception as e:
-        #     print(e)
-        #     conn.rollback()
-        #     return False
-    
-    def check_location(self, city, state, country):
-        conn = self.connect()
-        with conn.cursor(prepared=True) as cursor:
-            location_row = (city, state, country)
-            cursor.execute(CHECK_LOCATION_QUERY, location_row)
-            row = cursor.fetchone()
-            if(row):
-                now = datetime.now()
-                print(now)
-                print(row[1])
-                if (now - row[1]).total_seconds() > NUMBER_OF_SECONDS:
-                    # exceeded 24 hours
-                    print("here 1")
-                    return False, row[0]
+        try:
+            conn = self.connect()
+            conn.autocommit = False
+            rowcount = 0
+            with conn.cursor(prepared=True) as cursor:
+                location_row = (location_id, response_data['city'], response_data['state'])
+                if(location_id is None):
+                    location_id = uuid.uuid4().hex[:6].upper()
+                    location_row = (location_id, response_data['city'], response_data['state'])
+                    cursor.execute(INSERT_LOCATION_QUERY, location_row)
+                    counter = 0
+                    while(counter <= 3):
+                        description = response_data['day'+str(counter)]['description']
+                        high_temp = response_data['day'+str(counter)]['high_temp']
+                        low_temp = response_data['day'+str(counter)]['low_temp']
+                        humidity = response_data['day'+str(counter)]['humidity']
+                        daily_row = (location_id, counter, description, high_temp, low_temp, humidity)
+                        cursor.execute(INSERT_DAILY_QUERY, daily_row)
+                        counter = counter + 1
                 else:
-                    # not exceeded 24 hours
-                    print("here 2")
-                    return True, row[0]
-            else:
-                # no location present
-                print("here 3")
-                return False, None
+                    timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                    location_row = (timestamp, location_id)
+                    cursor.execute(UPDATE_LOCATION_QUERY, location_row)
+                    counter = 0
+                    while(counter <= 3):
+                        description = response_data['day'+str(counter)]['description']
+                        high_temp = response_data['day'+str(counter)]['high_temp']
+                        low_temp = response_data['day'+str(counter)]['low_temp']
+                        humidity = response_data['day'+str(counter)]['humidity']
+                        daily_row = (description, high_temp, low_temp, humidity, location_id, counter)
+                        cursor.execute(UPDATE_DAILY_QUERY, daily_row)
+                        counter = counter + 1
+                conn.commit()
+            self.disconnect()
+            return True
+        except Exception as e:
+            conn.rollback()
+            self.disconnect()
+            return False
     
+    """ 
+        For checking the database for a particular location
+          
+        Returns: 
+            check_location_flag: boolean value to denote if location exists and is not expired, 
+            location_id: string value denoting location id 
+            exception_flag: boolean value denoting if exception has occured
+    """
+    def check_location(self, city, state):
+        try:
+            conn = self.connect()
+            with conn.cursor(prepared=True) as cursor:
+                location_row = (city, state)
+                cursor.execute(CHECK_LOCATION_QUERY, location_row)
+                row = cursor.fetchone()
+                if(row):
+                    now = datetime.now()
+                    if (now - row[1]).total_seconds() > NUMBER_OF_SECONDS:
+                        # exceeded 24 hours
+                        self.disconnect()
+                        return False, row[0], False
+                    else:
+                        # not exceeded 24 hours
+                        self.disconnect()
+                        return True, row[0], False
+                else:
+                    # no location present
+                    self.disconnect()
+                    return False, None, False
+        except:
+            self.disconnect()
+            return False, None, True
+    
+    """ 
+        To fetch daily weather data for a particular location
+          
+        Returns: 
+            daily_data: results from database, 
+            exception_flag: boolean value denoting if exception has occured
+    """
     def get_location_data(self, location_id):
-        conn = self.connect()
-        with conn.cursor(prepared=True) as cursor:
-            data_row = (str(location_id))
-            cursor.execute(GET_DAILY_DATA, [(location_id)])
-            daily_data = []
-            for row in CursorByName(cursor):
-                daily_data.append(row)
-            # print(rows)
-            return daily_data
+        try:
+            conn = self.connect()
+            with conn.cursor(prepared=True) as cursor:
+                data_row = (str(location_id))
+                cursor.execute(GET_DAILY_DATA, data_row)
+                daily_data = []
+                for row in CursorByName(cursor):
+                    daily_data.append(row)
+                return daily_data, False
+        except:
+            self.disconnect()
+            return None, True
     
-    def insert_into_logs(self, request_ip, city, state, country):
+    """ 
+        For inserting every request into logs
+          
+        Returns: 
+            check_insert_flag: boolean value denoting if log was inserted
+    """
+    def insert_into_logs(self, request_ip, city, state):
         conn = self.connect()
         rowcount = 0
         with conn.cursor(prepared=True) as cursor:
-            location_row = (request_ip, city, state, country)
-            print(location_row)
+            location_row = (request_ip, city, state)
             cursor.execute(INSERT_LOG_QUERY, location_row)
             conn.commit()
             return cursor.rowcount == 1

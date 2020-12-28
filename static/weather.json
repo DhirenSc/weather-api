@@ -1,0 +1,134 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "description": "This page contains information for calling all the endpoints in the Weather Cast API",
+      "version": "1.0",
+      "title": "Weather Cast API",
+      "contact": {
+        "email": "dhirensc65@gmail.com"
+      }
+    },
+    "host": "18.217.91.81",
+    "basePath": "/",
+    "schemes": ["http"],
+    "tags": [
+      {
+        "name": "Report",
+        "description": "To get weather report for today as well as the next 3 days"
+      }
+    ],
+    "paths": {
+      "/api/report": {
+        "get": {
+          "tags": ["Report"],
+          "summary": "Returns the weather report based on request location",
+          "responses": {
+            "200": {
+              "description": "Please refer error field in each response for a better understanding",
+              "schema": { "$ref": "#/definitions/Report" }
+            }
+          }
+        }
+      }
+    },
+    "definitions": {
+      "Report": {
+        "type": "object",
+        "properties": {
+          "city": {
+            "type": "string",
+            "format": "string"
+          },
+          "state": {
+            "type": "string",
+            "format": "string"
+          },
+          "day0": {
+            "type": "object",
+            "properties": {
+              "description": {
+                "type": "string",
+                "format": "string"
+              },
+              "high_temp": {
+                "type": "number",
+                "format": "float"
+              },
+              "low_temp": {
+                "type": "number",
+                "format": "float"
+              },
+              "humidity": {
+                "type": "number",
+                "format": "int"
+              }
+            }
+          },
+          "day1": {
+            "type": "object",
+            "properties": {
+              "description": {
+                "type": "string",
+                "format": "string"
+              },
+              "high_temp": {
+                "type": "number",
+                "format": "float"
+              },
+              "low_temp": {
+                "type": "number",
+                "format": "float"
+              },
+              "humidity": {
+                "type": "number",
+                "format": "int"
+              }
+            }
+          },
+          "day2": {
+            "type": "object",
+            "properties": {
+              "description": {
+                "type": "string",
+                "format": "string"
+              },
+              "high_temp": {
+                "type": "number",
+                "format": "float"
+              },
+              "low_temp": {
+                "type": "number",
+                "format": "float"
+              },
+              "humidity": {
+                "type": "number",
+                "format": "int"
+              }
+            }
+          },
+          "day3": {
+            "type": "object",
+            "properties": {
+              "description": {
+                "type": "string",
+                "format": "string"
+              },
+              "high_temp": {
+                "type": "number",
+                "format": "float"
+              },
+              "low_temp": {
+                "type": "number",
+                "format": "float"
+              },
+              "humidity": {
+                "type": "number",
+                "format": "int"
+              }
+            }
+          }
+        }
+      }
+    }
+}
+  

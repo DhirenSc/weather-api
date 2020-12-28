@@ -1,1 +1,1 @@
-# weather-api
+# Weather Report API [Case Study]
