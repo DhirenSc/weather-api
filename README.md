@@ -20,11 +20,11 @@
 
 Focus being on the REST API, I have hosted the api on a remote server.
 
-LINK : http://18.217.91.81
+LINK : http://weathercast.ga
 
-TEST REPORT : http://18.217.91.81/api/report
+TEST REPORT : http://weathercast.ga/api/report
 
-DOCUMENTATION : http://18.217.91.81/swagger
+DOCUMENTATION : http://weathercast.ga/swagger
 
 This is just for testing purposes.
 
