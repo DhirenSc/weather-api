@@ -20,7 +20,9 @@
 
 Focus being on the REST API, I have hosted the api on a remote server.
 
-LINK : http://18.217.91.81/api/report
+LINK : http://18.217.91.81
+
+TEST REPORT : http://18.217.91.81/api/report
 
 DOCUMENTATION : http://18.217.91.81/swagger
 
