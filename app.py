@@ -58,6 +58,10 @@ def report():
     else:
         cached_response = cache.get(str(city) + "|" + str(state))
         if(cached_response):
+            report = Report(request_ip, str(city), str(state))
+            log_insert_message = report.log_insert(request_ip, str(city), str(state))
+            if(log_insert_message != "Inserted"):
+                cached_response = {"error": log_insert_message}
             return app.response_class(response = json.dumps(cached_response), mimetype=MIME_JSON)
         else:
             report = Report(request_ip, city, state)

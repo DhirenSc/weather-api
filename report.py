@@ -108,7 +108,14 @@ class Report:
     """
     def log_insert(self, request_ip, city, state):
         self.db = DBOperations()
-        return self.db.insert_into_logs(request_ip, city, state)
+        log_insert_check, log_exception_flag =self.db.insert_into_logs(request_ip, city, state)
+        if(not log_exception_flag):
+            if(not log_insert_check):
+                return "Unable to insert log request"
+            else:
+                return "Inserted"
+        else:
+            return "DB connection issue. Unable to insert log request"
     
     """ 
         For starting the report process. It goes from checking if location exists to 
@@ -138,11 +145,8 @@ class Report:
         else:
             weather_report = {"error": "DB Connection issue. Try again later"}
         
-        log_insert_check, log_exception_flag = self.log_insert(self.request_ip, weather_report['city'], weather_report['state'])
-        if(not log_exception_flag):
-            if(not log_insert_check):
-                weather_report = {"error": "Unable to log request"}
-        else:
-            weather_report = {"error": "DB connection issue. Unable to log request"}
-
+        log_insert_message = self.log_insert(self.request_ip, self.city, self.state)
+        if(log_insert_message != "Inserted"):
+            weather_report = {"error": log_insert_message}
+        
         return weather_report
