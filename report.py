@@ -115,7 +115,6 @@ class Report:
         fetching data from 3rd party api.
     """
     def process(self):
-
         # Check if location exists in DB (based on timestamp)
         check_location_flag, location_id, exception_flag = self.check_location(self.city, self.state)
         weather_report = None
@@ -132,18 +131,18 @@ class Report:
                 response = requests.get(url = API_ENDPOINT, headers = {"x-forwarded-for": self.request_ip})
                 if(response):
                     weather_report = self.create_response_from_api(response.text, location_id)
-                    if(weather_report):
-                        return weather_report
-                    else:
-                        weather_report = {"error": "Unable to update or insert new data"}
+                    if(weather_report is None):
+                        weather_report = {"error": "Unable to update or insert new data"}                        
                 else:
                     weather_report = {"error": "Unable to fetch weather data from API"}
         else:
-            weather_report = {"error": "DB Connection issue. Check database credentials"}
+            weather_report = {"error": "DB Connection issue. Try again later"}
         
-        if(not ("error" in weather_report)):
-            log_insert_check = self.log_insert(self.request_ip, weather_report['city'], weather_report['state'])
+        log_insert_check, log_exception_flag = self.log_insert(self.request_ip, weather_report['city'], weather_report['state'])
+        if(not log_exception_flag):
             if(not log_insert_check):
                 weather_report = {"error": "Unable to log request"}
-        
+        else:
+            weather_report = {"error": "DB connection issue. Unable to log request"}
+
         return weather_report

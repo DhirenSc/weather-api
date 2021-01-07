@@ -3,9 +3,9 @@
 """
 
 HOST = 'sql9.freemysqlhosting.net'
-DATABASE = 'sql9384086'
-USERNAME = 'sql9384086'
-PASSWORD = 'QHRyGgtCRc'
+DATABASE = 'sql9385632'
+USERNAME = 'sql9385632'
+PASSWORD = 'ClNZxGuQ19'
 
 NUMBER_OF_SECONDS = 86400 # seconds in 24 hours
 INSERT_LOCATION_QUERY = "INSERT INTO locations (location_id, city, state) VALUES (%s, %s, %s)"

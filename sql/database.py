@@ -137,11 +137,15 @@ class DBOperations:
             check_insert_flag: boolean value denoting if log was inserted
     """
     def insert_into_logs(self, request_ip, city, state):
-        conn = self.connect()
-        rowcount = 0
-        with conn.cursor(prepared=True) as cursor:
-            location_row = (request_ip, city, state)
-            cursor.execute(INSERT_LOG_QUERY, location_row)
-            conn.commit()
-            return cursor.rowcount == 1
+        try:
+            conn = self.connect()
+            rowcount = 0
+            with conn.cursor(prepared=True) as cursor:
+                location_row = (request_ip, city, state)
+                cursor.execute(INSERT_LOG_QUERY, location_row)
+                conn.commit()
+                return cursor.rowcount == 1, False
+        except:
+            self.disconnect()
+            return 0, True
 
